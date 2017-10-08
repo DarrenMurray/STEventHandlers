@@ -23,13 +23,12 @@ def installed() {
 
 def updated() {
 	log.debug "Updated with settings: ${settings}"
-
 	unsubscribe()
 	initialize()
 }
 
 def initialize() {
-	// Subscribe to attributes, devices, locations, etc.
+ // Subscribe to motion device
     subscribe(sensors, "motion", evtHandlerMotion)
 }
 
