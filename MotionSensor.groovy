@@ -1,3 +1,21 @@
+include 'asynchttp_v1'
+
+/**
+ *  Motion Sensor Test
+ *
+ *  Copyright 2017 Darren Murray
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ *  in compliance with the License. You may obtain a copy of the License at:
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+ *  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+ *  for the specific language governing permissions and limitations under the License.
+ *
+ */
+ 
 definition(
     name: "Motion Sensor Test",
     namespace: "DarrenMurray",
@@ -28,11 +46,22 @@ def updated() {
 }
 
 def initialize() {
- // Subscribe to motion device
+	// Subscribe to attributes, devices, locations, etc.
     subscribe(sensors, "motion", evtHandlerMotion)
 }
 
 //  Event handlers
 def evtHandlerMotion(evt) {
     log.debug("Motion Event Handler called")
+    getEvent()
+    
+}
+
+def getEvent() {
+    asynchttp_v1.get(responseHandler, [uri: 'www.url.com'])
+}
+
+
+def responseHandler(response, data) {
+    log.debug "Response data: ${response.data}"
 }
