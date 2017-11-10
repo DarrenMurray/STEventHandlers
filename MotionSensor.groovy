@@ -53,11 +53,11 @@ def initialize() {
 //  Event handlers
 def evtHandlerMotion(evt) {
     log.debug("Motion Event Handler called")
-    getEvent()
+    sendEvent()
     
 }
 
-def getEvent() {
+def sendEvent() {
     def params = [
         uri: 'https://home-hub-59831.herokuapp.com',
         path: '/api/sensor',
