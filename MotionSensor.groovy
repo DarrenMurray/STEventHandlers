@@ -58,10 +58,16 @@ def evtHandlerMotion(evt) {
 }
 
 def getEvent() {
-    asynchttp_v1.get(responseHandler, [uri: 'www.url.com'])
+    def params = [
+        uri: 'https://home-hub-59831.herokuapp.com',
+        path: '/api/sensor',
+        body: [deviceName: 'motionSensor']
+    ]
+    asynchttp_v1.post(responseHandler, params)
 }
 
 
 def responseHandler(response, data) {
     log.debug "Response data: ${response.data}"
 }
+
