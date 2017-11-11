@@ -28,7 +28,7 @@ definition(
 
 preferences {
     section("Select motion sensors") {
-        input("sensor", "capability.motionSensor",
+        input("sensors", "capability.motionSensor",
                           required: true, multiple: true)
     }
 }
@@ -46,7 +46,7 @@ def updated() {
 
 def initialize() {
 	// Subscribe to attributes, devices, locations, etc.
-    subscribe(sensor, "motion", evtHandlerMotion)
+    subscribe(sensors, "motion", evtHandlerMotion)
 }
 
 //  Event handlers
@@ -57,12 +57,12 @@ deviceID: evt.deviceId,
 lastActive: evt.isoDate,
 location: evt.location,
 stateChanged: evt.stateChange,
-motion: sensor.currentValue("motion").first(),
-battery: sensor.currentValue("battery").first(),
-temperature: sensor.currentValue("temperature").first()]
+motion: sensors.currentValue("motion").first(),
+battery: sensors.currentValue("battery").first(),
+temperature: sensors.currentValue("temperature").first()]
 
 //Log device and Capabilites
-log.debug( evt.device + "Event Handler called")
+log.debug( "${evt.device}Event Handler called")
 sensors.capabilities.each {cap -> log.debug "This device supports the ${cap.name} capability"}
 
 sendEvent(body)
