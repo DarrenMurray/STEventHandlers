@@ -26,10 +26,9 @@ definition(
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
     iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
 
-
 preferences {
     section("Select motion sensors") {
-        input("sensors", "capability.motionSensor",
+        input("sensor", "capability.motionSensor",
                           required: true, multiple: true)
     }
 }
@@ -47,21 +46,33 @@ def updated() {
 
 def initialize() {
 	// Subscribe to attributes, devices, locations, etc.
-    subscribe(sensors, "motion", evtHandlerMotion)
+    subscribe(sensor, "motion", evtHandlerMotion)
 }
 
 //  Event handlers
 def evtHandlerMotion(evt) {
-    log.debug("Motion Event Handler called")
-    sendEvent()
-    
+//Create message body
+def body = [deviceName: evt.device,
+deviceID: evt.deviceId,
+lastActive: evt.isoDate,
+location: evt.location,
+stateChanged: evt.stateChange,
+motion: sensor.currentValue("motion").first(),
+battery: sensor.currentValue("battery").first(),
+temperature: sensor.currentValue("temperature").first()]
+
+//Log device and Capabilites
+log.debug( evt.device + "Event Handler called")
+sensors.capabilities.each {cap -> log.debug "This device supports the ${cap.name} capability"}
+
+sendEvent(body)
 }
 
-def sendEvent() {
+def sendEvent(body) {
     def params = [
         uri: 'https://home-hub-59831.herokuapp.com',
         path: '/api/sensor',
-        body: [deviceName: 'motionSensor']
+        body: body
     ]
     asynchttp_v1.post(responseHandler, params)
 }
@@ -70,4 +81,3 @@ def sendEvent() {
 def responseHandler(response, data) {
     log.debug "Response data: ${response.data}"
 }
-
