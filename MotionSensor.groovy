@@ -52,23 +52,33 @@ def initialize() {
 //  Event handlers
 def evtHandlerMotion(evt) {
 //Create message body
-def body = [deviceName: evt.device,
+Map body = [deviceName: evt.device.name,
 deviceID: evt.deviceId,
 lastActive: evt.isoDate,
-location: evt.location,
+location: evt.location.name,
 stateChanged: evt.stateChange,
 motion: sensors.currentValue("motion").first(),
 battery: sensors.currentValue("battery").first(),
 temperature: sensors.currentValue("temperature").first()]
 
 //Log device and Capabilites
-log.debug( "${evt.device}Event Handler called")
+log.debug(body)
+log.debug("${evt.device}Event Handler called")
 sensors.capabilities.each {cap -> log.debug "This device supports the ${cap.name} capability"}
 
-sendEvent(body)
+    def params = [
+        uri: 'https://home-hub-59831.herokuapp.com',
+        path: '/api/sensor',
+        body: body
+    ]
+    asynchttp_v1.post(responseHandler, params)
+
+
 }
 
 def sendEvent(body) {
+log.debug("test")
+
     def params = [
         uri: 'https://home-hub-59831.herokuapp.com',
         path: '/api/sensor',
